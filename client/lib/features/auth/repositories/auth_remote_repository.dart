@@ -24,4 +24,5 @@ class AuthRemoteRepository {
   }
 
   Future<void> login() async {}
+  
 }

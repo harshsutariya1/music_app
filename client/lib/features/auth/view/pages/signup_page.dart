@@ -1,4 +1,5 @@
 import 'package:client/core/theme/app_pallete.dart';
+import 'package:client/features/auth/repositories/auth_remote_repository.dart';
 import 'package:client/features/auth/view/widgets/custom_form_field.dart';
 import 'package:client/features/auth/view/widgets/gradient_button.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
       appBar: AppBar(),
       body: _body(),
+      resizeToAvoidBottomInset: false,
     );
   }
 
@@ -61,8 +63,12 @@ class _SignupPageState extends State<SignupPage> {
             const SizedBox(height: 20),
             GradientButton(
               buttonText: "Sign Up",
-              onTap: () {
-                
+              onTap: () async {
+                await AuthRemoteRepository().signup(
+                  name: name.text,
+                  email: email.text,
+                  password: password.text,
+                );
               },
             ),
             const SizedBox(height: 20),

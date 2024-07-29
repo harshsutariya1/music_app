@@ -12,7 +12,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  
     return MaterialApp(
+      routes: {
+        '/login': (context) => const LoginPage(),
+        '/signup': (context) => const SignupPage(),
+      },
       debugShowMaterialGrid: false,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkThemeMode,

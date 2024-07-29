@@ -1,4 +1,5 @@
 import 'package:client/core/theme/app_pallete.dart';
+import 'package:client/features/auth/repositories/auth_remote_repository.dart';
 import 'package:client/features/auth/view/widgets/custom_form_field.dart';
 import 'package:client/features/auth/view/widgets/gradient_button.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +55,12 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
             GradientButton(
               buttonText: "Sign In",
-              onTap: (){},
+              onTap: () {
+                AuthRemoteRepository().login(
+                  email: email.text,
+                  password: password.text,
+                );
+              },
             ),
             const SizedBox(height: 20),
             _signUpText(),
@@ -75,21 +81,26 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _signUpText() {
-    return RichText(
-        text: const TextSpan(
-      style: TextStyle(
-        fontSize: 18,
-      ),
-      children: [
-        TextSpan(text: "Don't have an account? "),
-        TextSpan(
-          text: "Sign Up",
-          style: TextStyle(
-            color: Pallete.gradient2,
-            fontWeight: FontWeight.bold,
-          ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.pop(context);
+      },
+      child: RichText(
+          text: const TextSpan(
+        style: TextStyle(
+          fontSize: 18,
         ),
-      ],
-    ));
+        children: [
+          TextSpan(text: "Don't have an account? "),
+          TextSpan(
+            text: "Sign Up",
+            style: TextStyle(
+              color: Pallete.gradient2,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      )),
+    );
   }
 }

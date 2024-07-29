@@ -1,5 +1,6 @@
 import 'package:client/core/theme/app_pallete.dart';
 import 'package:client/features/auth/repositories/auth_remote_repository.dart';
+import 'package:client/features/auth/view/pages/login_page.dart';
 import 'package:client/features/auth/view/widgets/custom_form_field.dart';
 import 'package:client/features/auth/view/widgets/gradient_button.dart';
 import 'package:flutter/material.dart';
@@ -90,21 +91,26 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Widget _signInText() {
-    return RichText(
-        text: const TextSpan(
-      style: TextStyle(
-        fontSize: 18,
-      ),
-      children: [
-        TextSpan(text: "Already have an account? "),
-        TextSpan(
-          text: "Sign In",
-          style: TextStyle(
-            color: Pallete.gradient2,
-            fontWeight: FontWeight.bold,
-          ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, "/login");
+      },
+      child: RichText(
+          text: const TextSpan(
+        style: TextStyle(
+          fontSize: 18,
         ),
-      ],
-    ));
+        children: [
+          TextSpan(text: "Already have an account? "),
+          TextSpan(
+            text: "Sign In",
+            style: TextStyle(
+              color: Pallete.gradient2,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      )),
+    );
   }
 }

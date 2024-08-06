@@ -1,9 +1,9 @@
 import 'package:client/core/theme/app_pallete.dart';
 import 'package:client/features/auth/repositories/auth_remote_repository.dart';
-import 'package:client/features/auth/view/pages/login_page.dart';
 import 'package:client/features/auth/view/widgets/custom_form_field.dart';
 import 'package:client/features/auth/view/widgets/gradient_button.dart';
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -65,11 +65,16 @@ class _SignupPageState extends State<SignupPage> {
             GradientButton(
               buttonText: "Sign Up",
               onTap: () async {
-                await AuthRemoteRepository().signup(
+                final res = await AuthRemoteRepository().signup(
                   name: name.text,
                   email: email.text,
                   password: password.text,
                 );
+                final val = switch (res) {
+                  Left(value: final l) => l,
+                  Right(value: final r) => r.toString(),
+                };
+                print(val); 
               },
             ),
             const SizedBox(height: 20),

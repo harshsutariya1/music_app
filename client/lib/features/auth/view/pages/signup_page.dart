@@ -1,18 +1,21 @@
 import 'package:client/core/theme/app_pallete.dart';
-import 'package:client/features/auth/repositories/auth_remote_repository.dart';
+import 'package:client/core/utils.dart';
+import 'package:client/core/widgets/loader.dart';
+import 'package:client/features/auth/view/pages/login_page.dart';
 import 'package:client/features/auth/view/widgets/custom_form_field.dart';
 import 'package:client/features/auth/view/widgets/gradient_button.dart';
+import 'package:client/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
-import 'package:fpdart/fpdart.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SignupPage extends StatefulWidget {
+class SignupPage extends ConsumerStatefulWidget {
   const SignupPage({super.key});
 
   @override
-  State<SignupPage> createState() => _SignupPageState();
+  ConsumerState<SignupPage> createState() => _SignupPageState();
 }
 
-class _SignupPageState extends State<SignupPage> {
+class _SignupPageState extends ConsumerState<SignupPage> {
   final name = TextEditingController();
   final email = TextEditingController();
   final password = TextEditingController();
@@ -24,14 +27,39 @@ class _SignupPageState extends State<SignupPage> {
     email.dispose();
     password.dispose();
     super.dispose();
-    // formKey.currentState!.validate();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(authViewModelProvider.select((val) => val?.isLoading == true));
+
+    ref.listen(
+      authViewModelProvider,
+      (_, next) {
+        next?.when(
+          data: (data) {
+            showSnackBar(
+              context,
+              'Account created successfully! Please  login.',
+            );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const LoginPage(),
+              ),
+            );
+          },
+          error: (error, st) {
+            showSnackBar(context, error.toString());
+          },
+          loading: () {},
+        );
+      },
+    );
+
     return Scaffold(
       appBar: AppBar(),
-      body: _body(),
+      body: isLoading ? const Loader() : _body(),
       resizeToAvoidBottomInset: false,
     );
   }
@@ -65,16 +93,13 @@ class _SignupPageState extends State<SignupPage> {
             GradientButton(
               buttonText: "Sign Up",
               onTap: () async {
-                final res = await AuthRemoteRepository().signup(
-                  name: name.text,
-                  email: email.text,
-                  password: password.text,
-                );
-                final val = switch (res) {
-                  Left(value: final l) => l,
-                  Right(value: final r) => r.toString(),
-                };
-                print(val); 
+                if (formKey.currentState!.validate()) {
+                  await ref.read(authViewModelProvider.notifier).signUpUser(
+                        email: email.text,
+                        password: password.text,
+                        name: name.text,
+                      );
+                }
               },
             ),
             const SizedBox(height: 20),

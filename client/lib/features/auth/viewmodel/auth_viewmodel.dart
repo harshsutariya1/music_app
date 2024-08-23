@@ -29,7 +29,7 @@ class AuthViewModel extends _$AuthViewModel {
           l.message,
           StackTrace.current,
         ),
-      Right(value: final r) => AsyncData(r),
+      Right(value: final r) =>  state = AsyncValue.data(r),
     };
     print(val);
   }

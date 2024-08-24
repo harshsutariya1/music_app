@@ -43,12 +43,13 @@ class _SignupPageState extends ConsumerState<SignupPage> {
               context,
               'Account created successfully! Please  login.',
             );
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const LoginPage(),
-              ),
-            );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => const LoginPage(),
+            //   ),
+            // );
+            Navigator.pushReplacementNamed(context, '/login');
           },
           error: (error, st) {
             showSnackBar(context, error.toString());

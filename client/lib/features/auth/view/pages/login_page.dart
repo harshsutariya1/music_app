@@ -1,18 +1,22 @@
 import 'package:client/core/theme/app_pallete.dart';
+import 'package:client/core/utils.dart';
+import 'package:client/core/widgets/loader.dart';
 import 'package:client/features/auth/repositories/auth_remote_repository.dart';
 import 'package:client/features/auth/view/widgets/custom_form_field.dart';
 import 'package:client/features/auth/view/widgets/gradient_button.dart';
+import 'package:client/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final email = TextEditingController();
   final password = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -27,9 +31,35 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref
+        .watch(authViewModelProvider.select((val) => val?.isLoading == true));
+
+    ref.listen(
+      authViewModelProvider,
+      (_, next) {
+        next?.when(
+          data: (data) {
+            showSnackBar(
+              context,
+              'Login Successfully!',
+            );
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              "/home",
+              ModalRoute.withName('/signup'),
+            );
+          },
+          error: (error, st) {
+            showSnackBar(context, error.toString());
+          },
+          loading: () {},
+        );
+      },
+    );
+
     return Scaffold(
       appBar: AppBar(),
-      body: _body(),
+      body: isLoading ? const Loader() : _body(),
     );
   }
 
@@ -57,16 +87,12 @@ class _LoginPageState extends State<LoginPage> {
             GradientButton(
               buttonText: "Sign In",
               onTap: () async {
-                final res = await AuthRemoteRepository().login(
-                  email: email.text,
-                  password: password.text,
-                );
-
-                final val = switch (res) {
-                  Left(value: final l) => l,
-                  Right(value: final r) => r,
-                };
-                print(val);
+                if (formKey.currentState!.validate()) {
+                  await ref.read(authViewModelProvider.notifier).loginUser(
+                        email: email.text,
+                        password: password.text,
+                      );
+                }
               },
             ),
             const SizedBox(height: 20),

@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-import uuid,bcrypt
+import uuid, bcrypt
 from models.base import Base
 from routes import auth
 from database import engine

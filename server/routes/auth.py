@@ -6,8 +6,9 @@ from models.user import User
 from pydantic_schemas.user_create import UserCreate
 from fastapi import APIRouter
 from sqlalchemy.orm import Session
-
 from pydantic_schemas.user_login import UserLogin
+import jwt
+from sqlalchemy.orm import joinedload
 
 router = APIRouter()
 
@@ -43,4 +44,6 @@ def login_user(user: UserLogin, db: Session=Depends(get_db)):
      if not bcrypt.checkpw(user.password.encode(), user_db.password):
           raise HTTPException(status_code=400, detail='Incorrect password!')
      
-     return user_db
+     token = jwt.encode({'id': user_db.id},'password_key')
+     
+     return {'token' : token , 'user' : user_db}

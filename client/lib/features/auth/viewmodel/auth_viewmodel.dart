@@ -81,7 +81,8 @@ class AuthViewModel extends _$AuthViewModel {
       final res = await _authRemoteRepository.getCurrentUserData(token);
       final val = switch (res) {
         Left(value: final l) => state = AsyncValue.error(
-            l.message,
+            // l.message,
+            'error: $l',
             StackTrace.current,
           ),
         Right(value: final r) => _getDataSuccess(r),
